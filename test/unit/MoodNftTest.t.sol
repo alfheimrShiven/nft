@@ -14,6 +14,7 @@ contract MoodNftTest is Test {
     address USER = makeAddr("user");
 
     function setUp() external {
+        // Doesn't use the deployer script (DeployMoodNft.s.sol) hence a unit test
         moodNft = new MoodNft(happySvgUri, sadSvgUri);
     }
 

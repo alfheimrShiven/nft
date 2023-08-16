@@ -8,27 +8,42 @@ import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 /**
 @dev 
 Step 1: Getting Image URI as parameters (SVG -> Base64 -> ImageURI String)
-Step 2: Create the Token URI for those image uris (JSON -> Base64 -> TokenURI String)
+Step 2: Create the Token URI for those image uris (JSON -> Base64 -> TokenURI  String)
  */
 
 contract MoodNft is ERC721 {
+    // errors
+    error MoodNft__CantFlipMoodIfNotOwner();
+
     enum NFTState {
         HAPPY,
         SAD
     }
 
-    string private s_happySvgUri;
-    string private s_sadSvgUri;
+    string private s_happySvgImageUri;
+    string private s_sadSvgImageUri;
     uint256 public s_tokenCounter;
     mapping(uint256 => NFTState) private s_tokenIdToState;
 
     constructor(
-        string memory happySvgUri,
-        string memory sadSvgUri
+        string memory happySvgImageUri,
+        string memory sadSvgImageUri
     ) ERC721("Mood NFT", "MN") {
-        s_happySvgUri = happySvgUri;
-        s_sadSvgUri = sadSvgUri;
+        s_happySvgImageUri = happySvgImageUri;
+        s_sadSvgImageUri = sadSvgImageUri;
         s_tokenCounter = 0;
+    }
+
+    function flipMood(uint256 tokenId) public {
+        if (!_isApprovedOrOwner(msg.sender, tokenId)) {
+            revert MoodNft__CantFlipMoodIfNotOwner();
+        }
+
+        if (s_tokenIdToState[tokenId] == NFTState.HAPPY) {
+            s_tokenIdToState[tokenId] = NFTState.SAD;
+        } else {
+            s_tokenIdToState[tokenId] = NFTState.HAPPY;
+        }
     }
 
     /**
@@ -51,9 +66,9 @@ contract MoodNft is ERC721 {
         string memory imageUri;
 
         if (s_tokenIdToState[tokenId] == NFTState.HAPPY) {
-            imageUri = s_happySvgUri;
+            imageUri = s_happySvgImageUri;
         } else {
-            imageUri = s_sadSvgUri;
+            imageUri = s_sadSvgImageUri;
         }
 
         return
