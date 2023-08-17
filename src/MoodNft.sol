@@ -7,8 +7,8 @@ import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
 /**
 @dev 
-Step 1: Getting Image URI as parameters (SVG -> Base64 -> ImageURI String)
-Step 2: Create the Token URI for those image uris (JSON -> Base64 -> TokenURI  String)
+Step 1: Getting Image URI as parameters (SVG -> Base64 encoding (ASCII char.) -> ImageURI String)
+Step 2: Create the Token URI for those image uris (JSON metadata -> bytes -> Base64 encoded (ASCII characters) -> concatinating _baseURI (string) and Base64 encoded metadata using abi.encodePacked() returning bytes again -> typecasted to string (TokenURI  String)
  */
 
 contract MoodNft is ERC721 {
